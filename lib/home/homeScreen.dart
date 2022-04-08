@@ -83,17 +83,6 @@ class _HomeScreenState extends State<HomeScreen> {
   PolylinePoints polylinePoints = PolylinePoints();
 
 
-  Location location = new Location();
-  late LocationData _locationData;
-
-  Future<void> getCurrentLocation() async{
-    _locationData = await location.getLocation();
-  }
-  static double x = 0;
-  static double y = 0;
-  late LatLng _center = LatLng(x,y);
-
-
   getDirections(LatLng startLocation, LatLng endLocation) async {
     List<LatLng> polylineCoordinates = [];
 
@@ -130,6 +119,14 @@ class _HomeScreenState extends State<HomeScreen> {
       );
   }
 
+  void go_to_my_location(){
+    final CameraPosition _Mylocation = CameraPosition(
+        target: Provider.of<LocationProvider>(context, listen: false)
+            .locationPosition,
+        zoom: 18);
+    Provider.of<LocationProvider>(context, listen: false)
+        .mapController.animateCamera(CameraUpdate.newCameraPosition(_Mylocation));
+  }
 
 
 
@@ -141,11 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Provider.of<LocationProvider>(context, listen: false).initialization();
 
   }
-  static final CameraPosition _Mylocation = CameraPosition(
-      bearing: 192.8334901395799,
-      target: LatLng(x,y),
-      tilt: 59.440717697143555,
-      zoom: 19.151926040649414);
+
   @override
   Widget build(BuildContext context) {
     // if(!dataCame){
@@ -263,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: IconButton(
                     onPressed: () async {
                       // var directions = await LocationService().getDirections("Milan", "Paris");
-                      getDirections(_center,
+                      getDirections(Provider.of<LocationProvider>(context, listen: true).locationPosition,
                           LatLng(30.032074838079517, 31.232054159045216));
                       // print(directions);
                       // _setPolyline(directions['polyline_decode']);
@@ -276,7 +269,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           body: Stack(
             children: <Widget>[
-              if (model.locationPosition == null) Center(
+              if (model.locationPosition == LatLng(0,0)) Center(
                 child: CircularProgressIndicator(),
               ) else GoogleMap(
                 mapType: MapType.normal,
@@ -287,7 +280,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 myLocationEnabled: true,
                 myLocationButtonEnabled: true,
                 polylines: _polylines,
-                markers: Set<Marker>.of(model.markers.values),
                 onMapCreated: (GoogleMapController controller) async {
                   Provider.of<LocationProvider>(context, listen: false)
                       .setMapController(controller);
@@ -897,7 +889,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: <Widget>[
           GestureDetector(
             onTap: (){
-              mapController.animateCamera(CameraUpdate.newCameraPosition(_Mylocation));
+              go_to_my_location();
             },
             child: Container(
               decoration: new BoxDecoration(
@@ -968,37 +960,37 @@ class _HomeScreenState extends State<HomeScreen> {
     return _polylines;
   }
 
-  Map<MarkerId, Marker> getMarkerList(BuildContext context) {
-    Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
-    final MarkerId markerId1 = MarkerId("markerId1");
-    final MarkerId markerId2 = MarkerId("markerId2");
-    final MarkerId markerId3 = MarkerId("markerId3");
-    final Marker marker1 = Marker(
-      markerId: markerId1,
-      position: _center,
-      anchor: Offset(0.5, 0.5),
-      icon: bitmapDescriptorStartLocation,
-    );
-    if (isOffline) {
-      final Marker marker2 = Marker(
-        markerId: markerId2,
-        position: LatLng(lat2, long2),
-        anchor: Offset(0.5, 0.5),
-        icon: bitmapDescriptorStartLocation3,
-      );
-
-      final Marker marker3 = Marker(
-        markerId: markerId3,
-        position: LatLng(lat3, long3),
-        anchor: Offset(0.5, 0.5),
-        icon: bitmapDescriptorStartLocation2,
-      );
-      markers.addAll({markerId2: marker2});
-      markers.addAll({markerId3: marker3});
-    }
-    markers.addAll({markerId1: marker1});
-    return markers;
-  }
+  // Map<MarkerId, Marker> getMarkerList(BuildContext context) {
+  //   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+  //   final MarkerId markerId1 = MarkerId("markerId1");
+  //   final MarkerId markerId2 = MarkerId("markerId2");
+  //   final MarkerId markerId3 = MarkerId("markerId3");
+  //   final Marker marker1 = Marker(
+  //     markerId: markerId1,
+  //     position: ,
+  //     anchor: Offset(0.5, 0.5),
+  //     icon: bitmapDescriptorStartLocation,
+  //   );
+  //   if (isOffline) {
+  //     final Marker marker2 = Marker(
+  //       markerId: markerId2,
+  //       position: LatLng(lat2, long2),
+  //       anchor: Offset(0.5, 0.5),
+  //       icon: bitmapDescriptorStartLocation3,
+  //     );
+  //
+  //     final Marker marker3 = Marker(
+  //       markerId: markerId3,
+  //       position: LatLng(lat3, long3),
+  //       anchor: Offset(0.5, 0.5),
+  //       icon: bitmapDescriptorStartLocation2,
+  //     );
+  //     markers.addAll({markerId2: marker2});
+  //     markers.addAll({markerId3: marker3});
+  //   }
+  //   markers.addAll({markerId1: marker1});
+  //   return markers;
+  // }
 
   Future seticonimage3(BuildContext context) async {
     // ignore: unnecessary_null_comparison

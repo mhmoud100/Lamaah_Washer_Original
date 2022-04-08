@@ -3,8 +3,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
 class LocationProvider with ChangeNotifier {
-  Map<MarkerId, Marker> _markers = <MarkerId, Marker>{};
-  Map<MarkerId, Marker> get markers => _markers;
   final MarkerId markerId = MarkerId("1");
 
   late GoogleMapController _mapController;
@@ -13,7 +11,7 @@ class LocationProvider with ChangeNotifier {
   Location _location = new Location();
   Location get location => _location;
 
-  late LatLng _locationPosition;
+  late LatLng _locationPosition = LatLng(0,0);
   LatLng get locationPosition => _locationPosition;
 
   bool locationServiceActive = true;
