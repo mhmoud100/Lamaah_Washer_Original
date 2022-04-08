@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_cab_driver/constance/constance.dart';
 import 'package:my_cab_driver/main.dart';
 import 'package:my_cab_driver/Language/appLocalizations.dart';
+import 'package:location/location.dart';
 
 class EnableLocation extends StatefulWidget {
   @override
@@ -11,7 +12,28 @@ class EnableLocation extends StatefulWidget {
 class _EnableLocationState extends State<EnableLocation> with TickerProviderStateMixin {
   late AnimationController controller;
   late Animation<double> animation;
+  Future<void> getpermission() async{
+    Location location = new Location();
 
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+  }
   initState() {
     super.initState();
     controller = AnimationController(duration: const Duration(milliseconds: 700), vsync: this);
@@ -54,7 +76,7 @@ class _EnableLocationState extends State<EnableLocation> with TickerProviderStat
             Padding(
               padding: EdgeInsets.only(left: 14, right: 14),
               child: Text(
-                AppLocalizations.of('Lorem ipsum dolor sit amet, consectetur adipisc elit. Nullam ac vestibulum erat.'),
+                AppLocalizations.of('For a better experience turn on device location, which uses Google\'s Location service.'),
                 style: Theme.of(context).textTheme.subtitle2!.copyWith(
                       color: Theme.of(context).textTheme.headline6!.color,
                     ),
@@ -71,7 +93,7 @@ class _EnableLocationState extends State<EnableLocation> with TickerProviderStat
                 highlightColor: Colors.transparent,
                 splashColor: Colors.transparent,
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, Routes.AUTH);
+                  getpermission().then((value) => Navigator.pushReplacementNamed(context, Routes.AUTH));
                 },
                 child: Container(
                   height: 40,

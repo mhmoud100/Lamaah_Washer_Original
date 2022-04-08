@@ -1,14 +1,22 @@
+import 'dart:convert';
+import 'package:provider/provider.dart';
+
 import 'package:animator/animator.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
+import 'package:my_cab_driver/LocationService/LocationService.dart';
 import 'package:my_cab_driver/constance/constance.dart';
 import 'package:my_cab_driver/drawer/drawer.dart';
 import 'package:my_cab_driver/home/riderList.dart';
+import '../LocationService/location_provider.dart';
 import '../appTheme.dart';
 import 'package:my_cab_driver/Language/appLocalizations.dart';
-
+import '../Helper/url_helper.dart' as url_helper;
+import '../Helper/request_helper.dart';
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -22,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late BitmapDescriptor bitmapDescriptorStartLocation3;
 
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final String key = 'AIzaSyBc5toPbC3XtXmdT28mR-H2niY6r_OPda4';
 
   var lat = 51.506115;
   var long = -0.088339;
@@ -31,138 +40,301 @@ class _HomeScreenState extends State<HomeScreen> {
 
   var lat3 = 51.505944;
   var long3 = -0.087001;
-
+  Set<Polyline> _polylines = Set<Polyline>();
+  int _polylineCounter = 1;
+  // request_helper requestHelp = new request_helper();
+  // url_helper.Constants url_help = new url_helper.Constants();
+  // bool dataCame = false;
+  // Future<void> setStatus(String Status) async{
+  //   Uri uri = Uri.parse(url_help.setStatus);
+  //   Map <String, dynamic> body = {
+  //     "provider_id": "275",
+  //     "service_status": Status
+  //   };
+  //   requestHelp.requestPost(uri, body).then((response){
+  //     if(response.statusCode == 200){
+  //       print("Done");
+  //     }else{
+  //       print(response.statusCode);
+  //     }
+  //   });
+  // }
+  // int totalEarning = 0;
+  // Future<void> getTotalEarning() async {
+  //   Uri url = Uri.parse("${url_help.totalEarning}275");
+  //   Map<String, String> header = {'Content-Type': 'application/json; charset=UTF-8'};
+  //
+  //   requestHelp.requestGet(url, header).then((response){
+  //     if(response.statusCode == 200){
+  //       setState(() {
+  //         totalEarning = json.decode(response.body);
+  //         dataCame = true;
+  //       });
+  //     }else{
+  //
+  //       setState(() {
+  //         dataCame = true;
+  //       });
+  //
+  //       print("fail");
+  //     }
+  //   });
+  // }
   late GoogleMapController mapController;
+  PolylinePoints polylinePoints = PolylinePoints();
+
+
+  Location location = new Location();
+  late LocationData _locationData;
+
+  Future<void> getCurrentLocation() async{
+    _locationData = await location.getLocation();
+  }
+  static double x = 0;
+  static double y = 0;
+  late LatLng _center = LatLng(x,y);
+
+
+  getDirections(LatLng startLocation, LatLng endLocation) async {
+    List<LatLng> polylineCoordinates = [];
+
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+      key,
+      PointLatLng(startLocation.latitude, startLocation.longitude),
+      PointLatLng(endLocation.latitude, endLocation.longitude),
+      travelMode: TravelMode.driving,
+    );
+
+    if (result.points.isNotEmpty) {
+      result.points.forEach((PointLatLng point) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      });
+    } else {
+      print(result.errorMessage);
+    }
+    //add to the list of poly line coordinates
+    _setPolyline(polylineCoordinates);
+  }
+  void _setPolyline(List<LatLng> points) {
+    final String polylineVal = 'polyline$_polylineCounter';
+    _polylineCounter++;
+    print(points);
+      _polylines.add(
+        Polyline(
+            polylineId: PolylineId(polylineVal),
+            width: 2,
+            color: Theme.of(context).primaryColor,
+            points: points.map(
+                    (point) => LatLng(point.latitude, point.longitude)
+            ).toList()
+        ),
+      );
+  }
+
+
+
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    Provider.of<LocationProvider>(context, listen: false).initialization();
+
+  }
+  static final CameraPosition _Mylocation = CameraPosition(
+      bearing: 192.8334901395799,
+      target: LatLng(x,y),
+      tilt: 59.440717697143555,
+      zoom: 19.151926040649414);
+  @override
   Widget build(BuildContext context) {
+    // if(!dataCame){
+    //   getTotalEarning();
+    // }
     seticonimage(context);
     seticonimage2(context);
     seticonimage3(context);
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      child: Scaffold(
-        key: _scaffoldKey,
-        drawer: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.75 < 400 ? MediaQuery.of(context).size.width * 0.75 : 350,
-          child: Drawer(
-            child: AppDrawer(
-              selectItemName: 'Home',
+    return Consumer<LocationProvider>(builder: (consumerContext, model, child)
+    {
+      return Container(
+        color: Theme
+            .of(context)
+            .scaffoldBackgroundColor,
+        child: Scaffold(
+          key: _scaffoldKey,
+          drawer: SizedBox(
+            width: MediaQuery
+                .of(context)
+                .size
+                .width * 0.75 < 400 ? MediaQuery
+                .of(context)
+                .size
+                .width * 0.75 : 350,
+            child: Drawer(
+              child: AppDrawer(
+                selectItemName: 'Home',
+              ),
             ),
           ),
-        ),
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          automaticallyImplyLeading: false,
-          title: Row(
-            children: <Widget>[
-              SizedBox(
-                height: AppBar().preferredSize.height,
-                width: AppBar().preferredSize.height + 40,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    child: GestureDetector(
-                      onTap: () {
-                        _scaffoldKey.currentState!.openDrawer();
-                      },
-                      child: Icon(
-                        Icons.dehaze,
-                        color: Theme.of(context).textTheme.headline6!.color,
+          appBar: AppBar(
+            backgroundColor: Theme
+                .of(context)
+                .scaffoldBackgroundColor,
+            automaticallyImplyLeading: false,
+            title: Row(
+              children: <Widget>[
+                SizedBox(
+                  height: AppBar().preferredSize.height,
+                  width: AppBar().preferredSize.height + 40,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: GestureDetector(
+                        onTap: () {
+                          _scaffoldKey.currentState!.openDrawer();
+                        },
+                        child: Icon(
+                          Icons.dehaze,
+                          color: Theme
+                              .of(context)
+                              .textTheme
+                              .headline6!
+                              .color,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: !isOffline
-                    ? Text(
-                        AppLocalizations.of('OffLine'),
-                        style: Theme.of(context).textTheme.headline6!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).textTheme.headline6!.color,
-                            ),
-                        textAlign: TextAlign.center,
-                      )
-                    : Text(
-                        AppLocalizations.of('Online'),
-                        style: Theme.of(context).textTheme.headline6!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).textTheme.headline6!.color,
-                            ),
-                        textAlign: TextAlign.center,
-                      ),
-              ),
-              SizedBox(
-                height: AppBar().preferredSize.height,
-                width: AppBar().preferredSize.height + 40,
-                child: Container(
-                  alignment: Alignment.centerRight,
-                  child: Switch(
-                    activeColor: Theme.of(context).primaryColor,
-                    value: isOffline,
-                    onChanged: (bool value) {
-                      setState(() {
-                        isOffline = !isOffline;
-                      });
-                    },
+                Expanded(
+                  child: !isOffline
+                      ? Text(
+                    AppLocalizations.of('OffLine'),
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .headline6!
+                        .copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme
+                          .of(context)
+                          .textTheme
+                          .headline6!
+                          .color,
+                    ),
+                    textAlign: TextAlign.center,
+                  )
+                      : Text(
+                    AppLocalizations.of('Online'),
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .headline6!
+                        .copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme
+                          .of(context)
+                          .textTheme
+                          .headline6!
+                          .color,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
+                SizedBox(
+                  height: AppBar().preferredSize.height,
+                  width: AppBar().preferredSize.height + 40,
+                  child: Container(
+                    alignment: Alignment.centerRight,
+                    child: Switch(
+                      activeColor: Theme
+                          .of(context)
+                          .primaryColor,
+                      value: isOffline,
+                      onChanged: (bool value) {
+                        setState(() {
+                          isOffline = !isOffline;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: IconButton(
+                    onPressed: () async {
+                      // var directions = await LocationService().getDirections("Milan", "Paris");
+                      getDirections(_center,
+                          LatLng(30.032074838079517, 31.232054159045216));
+                      // print(directions);
+                      // _setPolyline(directions['polyline_decode']);
+                    },
+                    icon: Icon(Icons.star, color: Colors.blue,),
+                  ),
+                )
+              ],
+            ),
+          ),
+          body: Stack(
+            children: <Widget>[
+              if (model.locationPosition == null) Center(
+                child: CircularProgressIndicator(),
+              ) else GoogleMap(
+                mapType: MapType.normal,
+                initialCameraPosition: CameraPosition(
+                  target: model.locationPosition,
+                  zoom: 18,
+                ),
+                myLocationEnabled: true,
+                myLocationButtonEnabled: true,
+                polylines: _polylines,
+                markers: Set<Marker>.of(model.markers.values),
+                onMapCreated: (GoogleMapController controller) async {
+                  Provider.of<LocationProvider>(context, listen: false)
+                      .setMapController(controller);
+                },
+              ),
+              !isOffline
+                  ? Column(
+                children: <Widget>[
+                  offLineMode(),
+                  Expanded(
+                    child: SizedBox(),
+                  ),
+                  myLocation(),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  offLineModeDetail(),
+                  Container(
+                    height: MediaQuery
+                        .of(context)
+                        .padding
+                        .bottom,
+                    color: Theme
+                        .of(context)
+                        .scaffoldBackgroundColor,
+                  )
+                ],
+              )
+                  : Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Expanded(
+                    child: SizedBox(),
+                  ),
+                  myLocation(),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  onLineModeDetail(),
+                ],
               ),
             ],
           ),
         ),
-        body: Stack(
-          children: <Widget>[
-            GoogleMap(
-              mapType: MapType.normal,
-              initialCameraPosition: CameraPosition(
-                target: LatLng(51.507477, -0.084761),
-                zoom: 15,
-              ),
-              onMapCreated: (GoogleMapController controller) {
-                mapController = controller;
-                setLDMapStyle();
-              },
-              markers: Set<Marker>.of(getMarkerList(context).values),
-              polylines: Set<Polyline>.of(getPolyLine(context).values),
-            ),
-            !isOffline
-                ? Column(
-                    children: <Widget>[
-                      offLineMode(),
-                      Expanded(
-                        child: SizedBox(),
-                      ),
-                      myLocation(),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      offLineModeDetail(),
-                      Container(
-                        height: MediaQuery.of(context).padding.bottom,
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                      )
-                    ],
-                  )
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Expanded(
-                        child: SizedBox(),
-                      ),
-                      myLocation(),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      onLineModeDetail(),
-                    ],
-                  ),
-          ],
-        ),
-      ),
-    );
+      );
+     });
   }
 
   Widget onLineModeDetail() {
@@ -724,23 +896,28 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-          Container(
-            decoration: new BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: Theme.of(context).primaryColor,
-                  blurRadius: 12,
-                  spreadRadius: -5,
-                  offset: new Offset(0.0, 0),
-                )
-              ],
-            ),
-            child: CircleAvatar(
-              radius: 20,
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              child: Icon(
-                Icons.my_location,
-                color: Theme.of(context).textTheme.headline6!.color,
+          GestureDetector(
+            onTap: (){
+              mapController.animateCamera(CameraUpdate.newCameraPosition(_Mylocation));
+            },
+            child: Container(
+              decoration: new BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(context).primaryColor,
+                    blurRadius: 12,
+                    spreadRadius: -5,
+                    offset: new Offset(0.0, 0),
+                  )
+                ],
+              ),
+              child: CircleAvatar(
+                radius: 20,
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                child: Icon(
+                  Icons.my_location,
+                  color: Theme.of(context).textTheme.headline6!.color,
+                ),
               ),
             ),
           ),
@@ -799,7 +976,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final MarkerId markerId3 = MarkerId("markerId3");
     final Marker marker1 = Marker(
       markerId: markerId1,
-      position: LatLng(lat, long),
+      position: _center,
       anchor: Offset(0.5, 0.5),
       icon: bitmapDescriptorStartLocation,
     );

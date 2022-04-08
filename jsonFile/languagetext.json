@@ -827,16 +827,16 @@
             ]
         },
         {
-            "textId": "Lorem ipsum dolor sit amet, consectetur adipisc elit. Nullam ac vestibulum erat. Cras vulputate auctor lectus at consequat.",
+            "textId": "For a better experience turn on device location, which uses Google's Location service.",
             "languageTextList": [
                 {
-                    "fr": "Lorem ipsum dolor sit amet, consectetur adipisc elit. Nullam ac vestibulum erat. Cras vulputate auctor lectus at consequat."
+                    "fr": "Pour une meilleure expérience, activez la localisation de l'appareil, qui utilise le service de localisation de Google."
                 },
                 {
-                    "ar": "Lorem ipsum dolor sit amet، consectetur adipisc elit. Nullam ac الدهليز erat. Cras vulputate auctor lectus at result."
+                    "ar": "للحصول على تجربة أفضل ، شغّل موقع الجهاز الذي يستخدم خدمة الموقع من Google."
                 },
                 {
-                    "ja": "Lorem ipsum dolor sit amet、consectetur adipisc elit。 Nullam ac vestibulum erat。クラスでの結果としてのオークサーレクテス。"
+                    "ja": "より良い体験のために、Googleの位置情報サービスを使用するデバイスの位置情報をオンにします。"
                 }
             ]
         },

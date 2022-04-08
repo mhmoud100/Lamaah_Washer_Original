@@ -4,10 +4,12 @@ import 'package:my_cab_driver/constance/constance.dart';
 import 'package:my_cab_driver/auth/loginScreen.dart';
 import 'package:my_cab_driver/setting/settingScreen.dart';
 import 'package:my_cab_driver/splashScreen.dart';
+import 'LocationService/location_provider.dart';
 import 'appTheme.dart';
 import 'auth/signUpScreen.dart';
 import 'history/historyScreen.dart';
 import 'home/homeScreen.dart';
+import 'package:provider/provider.dart';
 import 'introduction/LocationScreen.dart';
 import 'introduction/introductionScreen.dart';
 import 'inviteFriend/inviteFriendScreen.dart';
@@ -77,11 +79,19 @@ class _MyAppState extends State<MyApp> {
       systemNavigationBarDividerColor: Colors.grey,
       systemNavigationBarIconBrightness: AppTheme.isLightTheme ? Brightness.dark : Brightness.light,
     ));
-    return MaterialApp(
+    return MultiProvider(
+        providers: [
+        ChangeNotifierProvider(
+        create: (context) => LocationProvider(),
+          child: HomeScreen(),
+    ),
+    ],
+     child: MaterialApp(
       title: 'MyCab Driver',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.getTheme(),
       routes: routes,
+    )
     );
   }
 
