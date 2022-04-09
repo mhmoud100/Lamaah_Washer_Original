@@ -264,17 +264,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   height: 14,
                                 ),
                                 Container(
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                                    border: Border.all(color: Theme.of(context).dividerColor),
-                                    color: Theme.of(context).backgroundColor,
-                                  ),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Container(
-                                        width: 86,
-                                        child: SizedBox(
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).backgroundColor,
+                                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                                      border: Border.all(color: Theme.of(context).dividerColor, width: 0.6),
+                                    ),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 16),
+                                          child: Container(
                                             width: 80,
                                             height: 60,
                                             child: Center(
@@ -282,17 +281,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                 onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
                                                 onValuePicked: (Country country) {
                                                   print("${country.name}");
-                                                  countryCode = "${country.phoneCode}";
                                                 },
                                                 itemBuilder: (Country country) {
                                                   return Row(
                                                     children: <Widget>[
                                                       CountryPickerUtils.getDefaultFlagImage(country),
-                                                      Expanded(
-                                                        child: Text(
-                                                          '  +${country.phoneCode}',
-                                                        ),
-                                                      ),
+                                                      Expanded(child: Text(country.isoCode)),
                                                     ],
                                                   );
                                                 },
@@ -300,28 +294,41 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                 isExpanded: true,
                                                 icon: SizedBox(),
                                               ),
-                                            )),
-                                      ),
-                                      Expanded(
-                                        child: TextFormField(
-                                          style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                                                color: Theme.of(context).textTheme.headline6!.color,
-                                              ),
-                                          keyboardType: TextInputType.number,
-                                          controller: _phoneController,
-                                          decoration: InputDecoration(
-                                            contentPadding: EdgeInsets.only(bottom: 8),
-                                            hintText: AppLocalizations.of('Mobile Number'),
-                                            hintStyle: Theme.of(context).textTheme.bodyText2!.copyWith(
-                                                  color: Theme.of(context).dividerColor,
-                                                ),
-                                            border: InputBorder.none,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                        Container(
+                                          color: Theme.of(context).dividerColor,
+                                          height: 32,
+                                          width: 1,
+                                        ),
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(left: 0, right: 16),
+                                            child: Container(
+                                              height: 48,
+                                              child: TextField(
+                                                maxLines: 1,
+                                                controller: _phoneController,
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                ),
+                                                cursorColor: Theme.of(context).primaryColor,
+                                                decoration: new InputDecoration(
+                                                  errorText: null,
+                                                  border: InputBorder.none,
+                                                  hintText: AppLocalizations.of(" Phone Number"),
+                                                  hintStyle: TextStyle(color: Theme.of(context).disabledColor),
+                                                ),
+                                                keyboardType: TextInputType.phone,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
+
                                 SizedBox(
                                   height: 36,
                                 ),
