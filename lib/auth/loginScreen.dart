@@ -3,6 +3,7 @@ import 'package:country_pickers/country.dart';
 import 'package:country_pickers/country_pickers.dart';
 import 'package:flutter/material.dart';
 import 'package:my_cab_driver/auth/phoneAuthScreen.dart';
+import 'package:my_cab_driver/auth/signUpScreen.dart';
 import 'package:my_cab_driver/constance/constance.dart';
 import 'package:my_cab_driver/Language/appLocalizations.dart';
 
@@ -13,8 +14,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   // Country _selectedDialogCountry = CountryPickerUtils.getCountryByIsoCode('IN');
-  String countryCode = "+91";
-
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,54 +111,56 @@ class _LoginScreenState extends State<LoginScreen> {
                                   border: Border.all(color: Theme.of(context).dividerColor),
                                   color: Theme.of(context).backgroundColor,
                                 ),
-                                child: Row(
-                                  children: <Widget>[
-                                    Container(
-                                      width: 86,
-                                      child: SizedBox(
-                                          width: 80,
-                                          height: 60,
-                                          child: Center(
-                                            child: CountryPickerDropdown(
-                                              onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-                                              onValuePicked: (Country country) {
-                                                print("${country.name}");
-                                              },
-                                              itemBuilder: (Country country) {
-                                                return Row(
-                                                  children: <Widget>[
-                                                    CountryPickerUtils.getDefaultFlagImage(country),
-                                                    Expanded(
-                                                      child: Text(
-                                                        country.isoCode,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                              itemHeight: null,
-                                              isExpanded: true,
-                                              icon: SizedBox(),
-                                            ),
-                                          )),
+                                child: TextFormField(
+                                  autofocus: false,
+                                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                                    color: Theme.of(context).textTheme.headline6!.color,
+                                  ),
+                                  keyboardType: TextInputType.text,
+                                  controller: _emailController,
+                                  decoration: InputDecoration(
+                                    hintText: 'name@example.com',
+                                    prefixIcon: Icon(
+                                      Icons.email,
+                                      size: 20,
+                                      color: Theme.of(context).textTheme.headline6!.color,
                                     ),
-                                    Expanded(
-                                      child: TextFormField(
-                                        autofocus: false,
-                                        style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                                              color: Theme.of(context).textTheme.headline6!.color,
-                                            ),
-                                        keyboardType: TextInputType.number,
-                                        decoration: InputDecoration(
-                                          hintText: 'Mobile Number',
-                                          hintStyle: Theme.of(context).textTheme.bodyText2!.copyWith(
-                                                color: Theme.of(context).dividerColor,
-                                              ),
-                                          border: InputBorder.none,
-                                        ),
-                                      ),
+                                    hintStyle: Theme.of(context).textTheme.bodyText2!.copyWith(
+                                      color: Theme.of(context).dividerColor,
                                     ),
-                                  ],
+                                    border: InputBorder.none,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 14,
+                              ),
+                              Container(
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  border: Border.all(color: Theme.of(context).dividerColor),
+                                  color: Theme.of(context).backgroundColor,
+                                ),
+                                child: TextFormField(
+                                  autofocus: false,
+                                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                                    color: Theme.of(context).textTheme.headline6!.color,
+                                  ),
+                                  keyboardType: TextInputType.text,
+                                  controller: _passwordController,
+                                  decoration: InputDecoration(
+                                    hintText: 'Password',
+                                    prefixIcon: Icon(
+                                      Icons.lock,
+                                      size: 20,
+                                      color: Theme.of(context).textTheme.headline6!.color,
+                                    ),
+                                    hintStyle: Theme.of(context).textTheme.bodyText2!.copyWith(
+                                      color: Theme.of(context).dividerColor,
+                                    ),
+                                    border: InputBorder.none,
+                                  ),
                                 ),
                               ),
                               SizedBox(
@@ -182,7 +185,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                   child: Center(
                                     child: Text(
-                                      AppLocalizations.of('NEXT'),
+                                      AppLocalizations.of(' Sign In'),
                                       style: Theme.of(context).textTheme.button!.copyWith(
                                             fontWeight: FontWeight.bold,
                                             color: Theme.of(context).scaffoldBackgroundColor,
@@ -190,6 +193,39 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                   ),
                                 ),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    AppLocalizations.of('Don\'t have an account?'),
+                                    style: Theme.of(context).textTheme.button!.copyWith(
+                                      color: Theme.of(context).textTheme.headline6!.color,
+                                    ),
+                                  ),
+                                  InkWell(
+                                    highlightColor: Colors.transparent,
+                                    splashColor: Colors.transparent,
+                                    onTap: () {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => SignUpScreen(),
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      AppLocalizations.of(' Sign Up'),
+                                      style: Theme.of(context).textTheme.button!.copyWith(
+                                        color: Theme.of(context).textTheme.headline6!.color,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                               SizedBox(
                                 height: 20,

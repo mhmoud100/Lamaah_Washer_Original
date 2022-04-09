@@ -98,7 +98,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                                       Expanded(
                                         child: TextField(
                                           controller: otpController,
-                                          maxLength: 4,
+                                          maxLength: 6,
                                           onChanged: (String txt) {
                                             setState(() {});
                                           },
@@ -194,7 +194,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
       );
     }
 
-    for (var i = 0; i < 4; i++) {
+    for (var i = 0; i < 6; i++) {
       otplist.add(getUI(otxt: otptxt.length > i ? otptxt[i] : ""));
     }
     return Row(

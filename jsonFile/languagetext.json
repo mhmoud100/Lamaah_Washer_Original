@@ -2121,10 +2121,24 @@
                     "fr": "Vous avez déjà un compte?"
                 },
                 {
-                    "ar": "هل لديك حساب؟"
+                    "ar": "هل لديك حساب بالفعل؟"
                 },
                 {
                     "ja": "すでにアカウントをお持ちですか？"
+                }
+            ]
+        },
+        {
+            "textId": "Don't have an account?",
+            "languageTextList": [
+                {
+                    "fr": "Je n'ai pas de compte?"
+                },
+                {
+                    "ar": "ليس لديك حساب؟"
+                },
+                {
+                    "ja": "アカウントを持っていない？"
                 }
             ]
         },
@@ -2139,6 +2153,20 @@
                 },
                 {
                     "ja": " サインイン"
+                }
+            ]
+        },
+        {
+            "textId": " Sign Up",
+            "languageTextList": [
+                {
+                    "fr": "S'inscrire"
+                },
+                {
+                    "ar": "اشتراك "
+                },
+                {
+                    "ja": " サインアップ"
                 }
             ]
         },

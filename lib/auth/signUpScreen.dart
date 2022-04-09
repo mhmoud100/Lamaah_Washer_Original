@@ -15,8 +15,12 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   var appBarheight = 0.0;
-  String countryCode = "+91";
-
+  String countryCode = "+971";
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _passwordconfirmController = TextEditingController();
+  TextEditingController _phoneController = TextEditingController();
   // Country _selectedDialogCountry = CountryPickerUtils.getCountryByIsoCode('IN');
 
   @override
@@ -38,7 +42,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: ListView(
                   children: <Widget>[
                     SizedBox(
-                      height: appBarheight,
+                      height:20,
                     ),
                     Card(
                       color: Theme.of(context).scaffoldBackgroundColor,
@@ -148,6 +152,38 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           color: Theme.of(context).textTheme.headline6!.color,
                                         ),
                                     keyboardType: TextInputType.text,
+                                    controller: _nameController,
+                                    decoration: InputDecoration(
+                                      hintText: 'User Name',
+                                      prefixIcon: Icon(
+                                        Icons.account_circle_rounded,
+                                        size: 20,
+                                        color: Theme.of(context).textTheme.headline6!.color,
+                                      ),
+                                      hintStyle: Theme.of(context).textTheme.bodyText2!.copyWith(
+                                            color: Theme.of(context).dividerColor,
+                                          ),
+                                      border: InputBorder.none,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 14,
+                                ),
+                                Container(
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                    border: Border.all(color: Theme.of(context).dividerColor),
+                                    color: Theme.of(context).backgroundColor,
+                                  ),
+                                  child: TextFormField(
+                                    autofocus: false,
+                                    style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                                      color: Theme.of(context).textTheme.headline6!.color,
+                                    ),
+                                    keyboardType: TextInputType.text,
+                                    controller: _emailController,
                                     decoration: InputDecoration(
                                       hintText: 'name@example.com',
                                       prefixIcon: Icon(
@@ -156,8 +192,70 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         color: Theme.of(context).textTheme.headline6!.color,
                                       ),
                                       hintStyle: Theme.of(context).textTheme.bodyText2!.copyWith(
-                                            color: Theme.of(context).dividerColor,
-                                          ),
+                                        color: Theme.of(context).dividerColor,
+                                      ),
+                                      border: InputBorder.none,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 14,
+                                ),
+                                Container(
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                    border: Border.all(color: Theme.of(context).dividerColor),
+                                    color: Theme.of(context).backgroundColor,
+                                  ),
+                                  child: TextFormField(
+                                    autofocus: false,
+                                    style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                                      color: Theme.of(context).textTheme.headline6!.color,
+                                    ),
+                                    keyboardType: TextInputType.text,
+                                    controller: _passwordController,
+                                    decoration: InputDecoration(
+                                      hintText: 'Password must be at least 6 chars',
+                                      prefixIcon: Icon(
+                                        Icons.lock,
+                                        size: 20,
+                                        color: Theme.of(context).textTheme.headline6!.color,
+                                      ),
+                                      hintStyle: Theme.of(context).textTheme.bodyText2!.copyWith(
+                                        color: Theme.of(context).dividerColor,
+                                      ),
+                                      border: InputBorder.none,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 14,
+                                ),
+                                Container(
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                    border: Border.all(color: Theme.of(context).dividerColor),
+                                    color: Theme.of(context).backgroundColor,
+                                  ),
+                                  child: TextFormField(
+                                    autofocus: false,
+                                    style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                                      color: Theme.of(context).textTheme.headline6!.color,
+                                    ),
+                                    keyboardType: TextInputType.text,
+                                    controller: _passwordconfirmController,
+                                    decoration: InputDecoration(
+                                      hintText: 'Confirm Password',
+                                      prefixIcon: Icon(
+                                        Icons.lock,
+                                        size: 20,
+                                        color: Theme.of(context).textTheme.headline6!.color,
+                                      ),
+                                      hintStyle: Theme.of(context).textTheme.bodyText2!.copyWith(
+                                        color: Theme.of(context).dividerColor,
+                                      ),
                                       border: InputBorder.none,
                                     ),
                                   ),
@@ -184,6 +282,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                 onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
                                                 onValuePicked: (Country country) {
                                                   print("${country.name}");
+                                                  countryCode = "${country.phoneCode}";
                                                 },
                                                 itemBuilder: (Country country) {
                                                   return Row(
@@ -191,7 +290,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                       CountryPickerUtils.getDefaultFlagImage(country),
                                                       Expanded(
                                                         child: Text(
-                                                          country.isoCode,
+                                                          '  +${country.phoneCode}',
                                                         ),
                                                       ),
                                                     ],
@@ -209,6 +308,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                 color: Theme.of(context).textTheme.headline6!.color,
                                               ),
                                           keyboardType: TextInputType.number,
+                                          controller: _phoneController,
                                           decoration: InputDecoration(
                                             contentPadding: EdgeInsets.only(bottom: 8),
                                             hintText: AppLocalizations.of('Mobile Number'),
@@ -275,7 +375,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           highlightColor: Colors.transparent,
                           splashColor: Colors.transparent,
                           onTap: () {
-                            Navigator.push(
+                            Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => LoginScreen(),
